@@ -1,25 +1,16 @@
 'use client'
 
 import { LoadingError, LoadingScreen } from "@/components/Loading";
+import {GalleryPage, galleryJSON } from "@/components/GalleryPage";
 import fetchJson from "@/hooks/fetchJson";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
-
-interface gJSON {
-  title: string,
-  cover: string,
-  images: number,
-  thumbnails: string,
-  source: string,
-  files: string[]
-}
 
 export default function Gallery () {
   const link = useSearchParams().get("link")
   if (!link)
     return (<LoadingError />);
-  const {data, loading, error} = fetchJson <gJSON> (link);
+  const {json, loading, error} = fetchJson <galleryJSON> (link);
 
   
   if (error)
@@ -28,14 +19,8 @@ export default function Gallery () {
   if (loading)
     return (<LoadingScreen />)
 
-  if (!data)
+  if (!json)
     return (<LoadingError />)
 
-  return (
-    <>
-      <h1>This is Gallery</h1>
-      <Link href="./pages"> Button </Link>
-      <h1>Success: {data.title}</h1>
-    </>
-  )
+  return ( <GalleryPage json={json} /> )
 }
