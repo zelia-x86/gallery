@@ -30,7 +30,12 @@ export default function RootLayout({
 			<head>
 				<link rel="icon" href="/favicon.svg" type="image/svg+xml"></link>
 			</head>
-			<body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-pink-800`}>{children}</body>
+			<body className={`
+				${geistSans.variable} ${geistMono.variable} antialiased
+				bg-radial from-[#0b0698] to-black bg-no-repeat w-screen h-screen
+			`}>{children}</body>
 		</html>
 	);
 }
+
+// bg-radial from-[#0b0698] to-black

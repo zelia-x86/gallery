@@ -4,7 +4,7 @@ export default function Floatbox ({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-transparent animate-fade-in">
+    <div className="w-full h-full flex items-center justify-center">
       {children}
     </div>
   )
