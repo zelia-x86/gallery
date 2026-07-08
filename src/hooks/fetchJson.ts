@@ -2,19 +2,28 @@
 
 import { useEffect, useState } from "react";
 
-export default function fetchJson <T> (url: string) {
+// enum
+const states = {
+  loading: 0,
+  loaded: 1,
+  error: 2,
+}
+
+function fetchJson <T> (url: string) {
   const [json, setJson] = useState <T|null> (null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState (false);
+  const [state, setState] = useState <number> (states.loading);
+
   useEffect(( ) => {
     try {
       fetch(url)
-        .then(r => r.json())
+        .then(r => r.json<T>())
         .then(r => {
-          setJson(r as T);
-          setLoading(false);
+          setJson(r);
+          setState(states.loaded);
         })
-    } catch (_) {setError(true)};
+    } catch (_) {setState(states.error)};
   }, [url]);
-  return {json, loading, error};
+  return {state, json};
 }
+
+export {fetchJson, states}

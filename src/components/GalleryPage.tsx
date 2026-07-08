@@ -22,7 +22,6 @@ function Album ({href}: {href: string}) {
 }
 
 function File ({source, image, i}: {source: string, image: string, i: number}) {
-  console.log(`/view?link=${encodeURIComponent(source)}&i=${i}`)
   return (
     <Link className="p-2" href={`/view?link=${encodeURIComponent(source)}&i=${i}`}>
       <Image src={`${source}/${image}`} alt="loading?"

@@ -1,6 +1,7 @@
 'use client';
 
 import FloatBox from '@/components/Floatbox';
+import { states } from '@/hooks/fetchJson';
 
 function LoadingError () {
   return (
@@ -23,4 +24,16 @@ function LoadingScreen() {
   );
 }
 
-export {LoadingScreen,LoadingError}
+export default function Loading ({state}: {state: number}) {
+  switch (state) {
+    case states.loading:
+      return ( <LoadingScreen /> );      
+      break;
+    case states.error:
+      return ( <LoadingError /> );
+      break;
+    default:
+      return ( <LoadingError /> );
+      break;
+  }
+}
