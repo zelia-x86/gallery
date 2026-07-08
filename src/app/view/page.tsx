@@ -7,13 +7,13 @@ import fetchJson from "@/hooks/fetchJson";
 import { useSearchParams } from "next/navigation";
 
 export default function view () {
-  const link = useSearchParams().get("link");
+  const source = useSearchParams().get("link");
   const cursor = useSearchParams().get("i");
-  if (!link)
+  if (!source)
     return (<LoadingError />);
 
 
-  const {json, loading, error} = fetchJson <galleryJSON> (link);
+  const {json, loading, error} = fetchJson <galleryJSON> (source + "/index.json");
 
   
   if (error)
@@ -25,13 +25,7 @@ export default function view () {
   if (!json)
     return (<LoadingError />)
 
-  const base = new URL(link);
-  base.pathname = base.pathname.replace(/[^/]*$/, "");
-  if (!base.pathname.endsWith("/"))
-    base.pathname += "/";
-
-
   return (
-    <View origin={base} json={json} cursor={parseInt(cursor ?? "0")}/>
+    <View source={source} json={json} cursor={parseInt(cursor ?? "0")}/>
   )
 }

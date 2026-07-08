@@ -6,28 +6,62 @@ import { useSearchParams } from "next/navigation"
 
 export interface galleryJSON {
   title: string,
-  cover: string,
-  images: number,
-  thumbnails: string,
-  source: string,
-  files: string[]
+  albums: string[],
+  images: string[],
+}
+
+function Album ({href}: {href: string}) {
+  return (
+    <Link className="p-2 " href={"/gallery?link=" + encodeURIComponent(href)}>
+      <Image src={href + "/cover.jpg"} alt="loading?"
+        className="hover:bg-sky-950 transition-colors duration-500 bg-black
+          object-contain rounded-lg border-2 border-[#03fbff] h-full w-full"
+        width={96} height={96} />
+    </Link>    
+  )
+}
+
+function File ({source, image, i}: {source: string, image: string, i: number}) {
+  console.log(`/view?link=${encodeURIComponent(source)}&i=${i}`)
+  return (
+    <Link className="p-2" href={`/view?link=${encodeURIComponent(source)}&i=${i}`}>
+      <Image src={`${source}/${image}`} alt="loading?"
+        className="hover:bg-sky-950 transition-colors duration-500 bg-black
+          object-contain rounded-lg border-2 border-[#03fbff] h-full w-full"
+        width={96} height={96} />
+    </Link>
+  )
+}
+
+function Separator ({flag}: {flag: boolean}) {
+  if (flag)
+    return ( <h1>***********************************************</h1> )
+  else
+    return ( <></> )
 }
 
 export function GalleryPage ( {json}: {json: galleryJSON} ) {
-  const link = new URL(decodeURIComponent(useSearchParams().get("link") ?? ""));
-  const base = link.origin + link.pathname.replace(/[^/]*$/, "");
-  console.log(link)
+  const source = new URL(decodeURIComponent(useSearchParams().get("link") ?? ""));
+
+  const albums = json.albums.map((album, i) => {
+    const newSource = new URL(source);
+    newSource.pathname += "/" + album;
+    return ( <Album href={newSource.href} key={i} /> )
+  })
+
+  const images = json.images.map((image, i) => 
+    <File source={source.href} image={image} i={i + 1} key={i}  />
+  );
+
   return (
-    <div className="grid grid-cols-10 grid-rows-5 w-screen h-screen gap-2 rounded-lg p-6 lg:overflow-visible">
-      {
-        json.files.map((e, i) =>
-          <Link key={i} className="p-2 " href={`/view?link=${encodeURIComponent(link.href)}&i=${i+1}`}>
-            <Image src={base + json.thumbnails + e} alt=""
-              className="hover:bg-sky-950 transition-colors duration-500 bg-black  object-contain rounded-lg border-2 border-[#03fbff] h-full w-full"
-              width={1080} height={1080} />
-          </Link>
-        ) 
-      }
-    </div>
+    <>
+      <div className="grid grid-cols-10 auto-rows-auto w-screen gap-2 rounded-lg p-6 lg:overflow-visible">
+        {albums}
+      </div>
+      <Separator flag={albums.length > 0} />
+      <div className="grid grid-cols-10 auto-rows-auto w-screen gap-2 rounded-lg p-6 lg:overflow-visible">
+        {images}
+      </div>
+    </>
     )
 }

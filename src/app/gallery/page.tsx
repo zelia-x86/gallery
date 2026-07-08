@@ -10,7 +10,7 @@ export default function Gallery () {
   const link = useSearchParams().get("link")
   if (!link)
     return (<LoadingError />);
-  const {json, loading, error} = fetchJson <galleryJSON> (link);
+  const {json, loading, error} = fetchJson <galleryJSON> (link + "/index.json");
 
   
   if (error)
