@@ -18,12 +18,12 @@ export function GalleryPage ( {json}: {json: galleryJSON} ) {
   const base = link.origin + link.pathname.replace(/[^/]*$/, "");
   console.log(link)
   return (
-    <div className="grid grid-cols-4 w-full gap-2 rounded-lg p-6 lg:overflow-visible">
+    <div className="grid grid-cols-10 grid-rows-5 w-screen h-screen gap-2 rounded-lg p-6 lg:overflow-visible">
       {
         json.files.map((e, i) =>
-          <Link key={i} className="min-h-96" href={`/view?link=${encodeURIComponent(link.href)}&i=${i+1}`}>
+          <Link key={i} className="p-2 " href={`/view?link=${encodeURIComponent(link.href)}&i=${i+1}`}>
             <Image src={base + json.thumbnails + e} alt=""
-              className="object-contain rounded-lg border-2 border-[#03fbff] h-full w-full"
+              className="hover:bg-sky-950 transition-colors duration-500 bg-black  object-contain rounded-lg border-2 border-[#03fbff] h-full w-full"
               width={1080} height={1080} />
           </Link>
         ) 

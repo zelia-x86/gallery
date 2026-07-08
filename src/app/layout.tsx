@@ -37,5 +37,3 @@ export default function RootLayout({
 		</html>
 	);
 }
-
-// bg-radial from-[#0b0698] to-black
