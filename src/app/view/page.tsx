@@ -5,10 +5,13 @@ import Loading from "@/components/Loading";
 import View from "@/components/View"
 import {fetchJson, states} from "@/hooks/fetchJson";
 import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function view () {
   const source = useSearchParams().get("link");
-  const cursor = useSearchParams().get("i");
+
+  console.log("test")
+
 
   if (!source)
     return (<Loading state={states.error} />);
@@ -18,7 +21,7 @@ export default function view () {
 
   
     if (state == states.loaded && json != null)
-      return ( <View source={source} json={json} cursor={parseInt(cursor ?? "0")}/> )
+      return ( <View source={source} json={json}/> )
     else
       return ( <Loading state={state} /> );
 }
