@@ -43,9 +43,7 @@ export default function View ({source, json}: {
     addEventListener("keydown", listener);
 
 
-    console.log("bucket:", bucket.current);
     if (bucket.current === null) {
-      console.log("bump")
       bucket.current = [];
       json.images.map(e => {
         bucket.current?.push((
