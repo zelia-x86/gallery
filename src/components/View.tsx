@@ -11,8 +11,12 @@ export default function View ({source, json}: {
 {
   const search = useSearchParams();
   const [cursor, setCursor] = useState <number> (0);
-  const bucket = useRef<ReactNode[]>(null);
   const max = 30; //paging size
+  const bucket = [
+    { index: cursor - 1 >= 0 ? cursor - 1 : null, visible: false },
+    { index: cursor, visible: true },
+    { index: cursor + 1 < json.images.length ? cursor + 1 : null, visible: false },
+  ];
 
   useEffect (() => {
     console.log("init")
@@ -42,21 +46,6 @@ export default function View ({source, json}: {
 
     addEventListener("keydown", listener);
 
-
-    if (bucket.current === null) {
-      bucket.current = [];
-      json.images.map(e => {
-        bucket.current?.push((
-          <Image
-            src={`${source}/${e}`} alt="loading?"
-            width={1080} height={1080}
-            preload={true}
-            className="h-full w-full object-contain"
-          />
-        ))      
-      })
-    }
-
     return () => {
       removeEventListener("keydown", listener);
     }
@@ -65,7 +54,22 @@ export default function View ({source, json}: {
 
   return (
     <div className="w-dvw h-dvh rounded-3xl border-4 border-[#03fbff]">
-      {bucket.current?.at(cursor)}
+      {bucket.map(e => {
+        if (e.index !== null)
+          return (
+          <Image
+            key={e.index}
+            src={`${source}/${json.images[e.index]}`} alt={"index: " + e.index}
+            width={1080} height={1080}
+            loading={e.visible ? "eager" : "lazy"}
+            fetchPriority={e.visible ? "high" : "low"}
+            className={e.visible ?
+              "h-full w-full object-contain opacity-100 z-10"
+              : "opacity-0 z-0 w-0 h-0"
+            }
+          />
+        )
+      })}
     </div>
   )
 }
