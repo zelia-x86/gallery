@@ -4,14 +4,16 @@ import Image from "next/image"
 import { galleryJSON } from "./GalleryPage"
 import { ReactElement, ReactNode, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/router";
 
 export default function View ({source, json}: {
     source: string, json: galleryJSON
   })
 {
   const search = useSearchParams();
+  const router = useRouter();
   const [cursor, setCursor] = useState <number> (0);
-  const max = 30; //paging size
+  const paging = 10; //paging size
   const bucket = [
     { index: cursor - 1 >= 0 ? cursor - 1 : null, visible: false },
     { index: cursor, visible: true },
@@ -19,7 +21,6 @@ export default function View ({source, json}: {
   ];
 
   useEffect (() => {
-    console.log("init")
     // set cursor
     const i = parseInt(search.get("i") ?? "0");
     if (i > 1 && i <= json.images.length)
@@ -29,6 +30,23 @@ export default function View ({source, json}: {
   }, []);
 
   useEffect (() => {
+    // preloading
+    const preloadQueue = json.images.slice(cursor + 1, cursor + paging + 1);
+    let canceled = false;
+    const preload = async () => {
+      for (let e of preloadQueue) {
+        if (canceled)
+          return;
+
+        await (new Promise <void>((resolve, reject) => {
+          const img = new window.Image();
+          img.src = `${source}/${e}`;
+          img.onload = () => resolve();
+          img.onerror = () => reject();
+        })).catch(() => {});
+      }
+    }
+
     // add listners
     const listener = (e: KeyboardEvent) => {
       switch (e.code) {
@@ -46,7 +64,11 @@ export default function View ({source, json}: {
 
     addEventListener("keydown", listener);
 
+    // start preload
+    preload();
+
     return () => {
+      canceled = true;
       removeEventListener("keydown", listener);
     }
   }, [cursor]);
