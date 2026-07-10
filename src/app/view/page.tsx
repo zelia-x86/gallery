@@ -10,17 +10,14 @@ import { useEffect, useState } from "react";
 export default function view () {
   const source = useSearchParams().get("link");
 
-  console.log("test")
-
-
   if (!source)
     return (<Loading state={states.error} />);
 
 
-  const {json, state} = fetchJson <galleryJSON> (source + "/index.json");
+  const {json, state} = fetchJson <galleryJSON> (decodeURIComponent(source) + "/index.json");
 
   
-    if (state == states.loaded && json != null)
+    if (state == states.loaded && json !== null)
       return ( <View source={source} json={json}/> )
     else
       return ( <Loading state={state} /> );

@@ -11,50 +11,63 @@ export default function View ({source, json}: {
 {
   const search = useSearchParams();
   const [cursor, setCursor] = useState <number> (0);
-  const bucket = useRef<ReactNode[]>([]);
+  const bucket = useRef<ReactNode[]>(null);
   const max = 30; //paging size
 
   useEffect (() => {
-    if (cursor < 0)
-      setCursor(0);
-    else if (cursor > json.images.length - 1)
+    console.log("init")
+    // set cursor
+    const i = parseInt(search.get("i") ?? "0");
+    if (i > 1 && i <= json.images.length)
+      setCursor(i - 1);
+    else if (i > json.images.length)
       setCursor(json.images.length - 1);
-    // set browser search params
-
-
-  }, [cursor]);
+  }, []);
 
   useEffect (() => {
-    json.images.map(e => {
-      bucket.current.push((
-        <Image
-          src={`${source}/${e}`} alt="loading?"
-          width={1080} height={1080}
-          preload={true}
-          className="h-full w-full object-contain"
-        />
-      ))
-    })
-    const i = parseInt(search.get("i") ?? "0");
-    if (i > 1)
-      setCursor(i - 1);
-
-    addEventListener("keydown", e => {
+    // add listners
+    const listener = (e: KeyboardEvent) => {
       switch (e.code) {
         case "ArrowLeft":
-          setCursor(cursor - 1);          
+          if (cursor > 0)
+            setCursor(cursor - 1);
           break;
         case "ArrowRight":
-          setCursor(cursor + 1);      
+          if (cursor < json.images.length - 1)
+            setCursor(cursor + 1);
         default:
           break;
       }
-    });
-  }, []);
+    };
+
+    addEventListener("keydown", listener);
+
+
+    console.log("bucket:", bucket.current);
+    if (bucket.current === null) {
+      console.log("bump")
+      bucket.current = [];
+      json.images.map(e => {
+        bucket.current?.push((
+          <Image
+            src={`${source}/${e}`} alt="loading?"
+            width={1080} height={1080}
+            preload={true}
+            className="h-full w-full object-contain"
+          />
+        ))      
+      })
+    }
+
+    return () => {
+      removeEventListener("keydown", listener);
+    }
+  }, [cursor]);
+
 
   return (
     <div className="w-dvw h-dvh rounded-3xl border-4 border-[#03fbff]">
-      {bucket.current.at(cursor)}
+      {bucket.current?.at(cursor)}
     </div>
   )
 }
