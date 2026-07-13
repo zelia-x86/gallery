@@ -1,3 +1,5 @@
+'use client'
+
 import {
   Card,
   CardContent,
@@ -16,7 +18,7 @@ import { useSearchParams } from "next/navigation";
 import Form from "next/form"
 
 
-export default function InitCard ( {link}: {link: string} ) {
+export default function InitCard () {
   return (
     <FloatBox>
       <Card className="mx-auto w-full max-w-sm">

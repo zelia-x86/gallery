@@ -1,15 +1,9 @@
 'use client'
 
+import { states } from "@/components/Loading";
 import { useEffect, useState } from "react";
 
-// enum
-const states = {
-  loading: 0,
-  loaded: 1,
-  error: 2,
-}
-
-function fetchJson <T> (url: string) {
+export default function fetchJson <T> (url: string) {
   const [json, setJson] = useState <T|null> (null);
   const [state, setState] = useState <number> (states.loading);
 
@@ -25,5 +19,3 @@ function fetchJson <T> (url: string) {
   }, [url]);
   return {state, json};
 }
-
-export {fetchJson, states}

@@ -4,8 +4,10 @@ import Image from "next/image"
 import { galleryJSON } from "./GalleryPage"
 import { useEffect, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
+import { Loading, states } from "./Loading";
+import fetchJson from "@/hooks/fetchJson";
 
-export default function View ({source, json}: {
+function Page ({source, json}: {
     source: string, json: galleryJSON
   })
 {
@@ -115,4 +117,21 @@ export default function View ({source, json}: {
       })}
     </div>
   )
+}
+
+export default function View () {
+
+  const source = useSearchParams().get("link");
+
+  if (!source)
+    return (<Loading state={states.error} />);
+
+
+  const {json, state} = fetchJson <galleryJSON> (decodeURIComponent(source) + "/index.json");
+
+  
+    if (state == states.loaded && json !== null)
+      return ( <Page source={source} json={json}/> )
+    else
+      return ( <Loading state={state} /> );
 }

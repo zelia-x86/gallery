@@ -1,7 +1,13 @@
 'use client';
 
 import FloatBox from '@/components/Floatbox';
-import { states } from '@/hooks/fetchJson';
+
+// enum
+const states = {
+  loading: 0,
+  loaded: 1,
+  error: 2,
+}
 
 function LoadingError () {
   return (
@@ -24,7 +30,7 @@ function LoadingScreen() {
   );
 }
 
-export default function Loading ({state}: {state: number}) {
+function Loading ({state}: {state: number}) {
   switch (state) {
     case states.loading:
       return ( <LoadingScreen /> );      
@@ -37,3 +43,5 @@ export default function Loading ({state}: {state: number}) {
       break;
   }
 }
+
+export {Loading, states};

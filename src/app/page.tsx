@@ -1,8 +1,13 @@
 'use client'
 
 import InitCard from "@/components/InitCard";
-import { useSearchParams } from "next/navigation";
+import { Loading, states } from "@/components/Loading";
+import { Suspense } from "react";
 
 export default function Home() {
-	return ( <InitCard link={useSearchParams().get("link") ?? ""} /> );
+	return (
+    <Suspense fallback={(<Loading state={states.loading} />)}>
+      <InitCard />
+    </Suspense>
+  );
 }

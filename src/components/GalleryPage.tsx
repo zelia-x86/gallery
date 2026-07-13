@@ -4,6 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation"
 import { Separator } from "./ui/separator";
+import fetchJson from "@/hooks/fetchJson";
+import { Loading, states } from "./Loading";
 
 export interface galleryJSON {
   title: string,
@@ -45,7 +47,7 @@ function Label ({children}: {children: string}) {
   )
 }
 
-export function GalleryPage ( {json}: {json: galleryJSON} ) {
+function Page ( {json}: {json: galleryJSON} ) {
   const source = new URL(decodeURIComponent(useSearchParams().get("link") ?? ""));
 
   return (
@@ -68,4 +70,17 @@ export function GalleryPage ( {json}: {json: galleryJSON} ) {
       </div>
     </div>
     )
+}
+
+export default function GalleryPage () {
+  const link = useSearchParams().get("link");
+  if (!link)
+    return (<Loading state={states.error} />);
+
+  const {state, json} = fetchJson <galleryJSON> (link + "/index.json");
+
+  if (state == states.loaded && json != null)
+    return ( <Page json={json} /> )
+  else
+    return ( <Loading state={state} /> )
 }
