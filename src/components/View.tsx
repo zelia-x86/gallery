@@ -3,7 +3,7 @@
 import Image from "next/image"
 import { galleryJSON } from "./GalleryPage"
 import { useEffect, useState } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 
 export default function View ({source, json}: {
     source: string, json: galleryJSON
@@ -11,7 +11,6 @@ export default function View ({source, json}: {
 {
   const search = useSearchParams();
   const pathname = usePathname();
-  const router = useRouter();
   const [cursor, setCursor] = useState <number> (0);
   const paging = 10; //paging size
   const bucket = [
@@ -33,7 +32,8 @@ export default function View ({source, json}: {
     // set url index
     const params = new URLSearchParams(search.toString());
     params.set("i", (cursor + 1).toString());
-    router.push(`${pathname}?$${params.toString()}`, { scroll: false });    
+    window.history.replaceState(window.history.state, "",
+      `${pathname}?${params.toString()}`);
 
     // preloading
     const preloadQueue = json.images.slice(cursor + 1, cursor + paging + 1);
