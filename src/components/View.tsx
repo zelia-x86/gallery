@@ -12,6 +12,14 @@ export default function View ({source, json}: {
   const search = useSearchParams();
   const pathname = usePathname();
   const [cursor, setCursor] = useState <number> (0);
+  const next = () => {
+    if (cursor < json.images.length - 1)
+      setCursor(cursor + 1);
+  };
+  const prev = () => {
+    if (cursor > 0)
+      setCursor(cursor - 1);
+  }
   const paging = 10; //paging size
   const bucket = [
     { index: cursor - 1 >= 0 ? cursor - 1 : null, visible: false },
@@ -53,34 +61,42 @@ export default function View ({source, json}: {
     }
 
     // add listners
-    const listener = (e: KeyboardEvent) => {
+    const keyboard = (e: KeyboardEvent) => {
       switch (e.code) {
         case "ArrowLeft":
-          if (cursor > 0)
-            setCursor(cursor - 1);
+          prev();
           break;
         case "ArrowRight":
-          if (cursor < json.images.length - 1)
-            setCursor(cursor + 1);
+          next();
         default:
           break;
       }
     };
 
-    addEventListener("keydown", listener);
+    const click = (e: MouseEvent) => {
+      console.log(e.clientX, e.pageX);
+    }
+
+    addEventListener("keydown", keyboard);
+    addEventListener("click", click);
 
     // start preload
     preload();
 
     return () => {
       canceled = true;
-      removeEventListener("keydown", listener);
+      removeEventListener("keydown", keyboard);
+      removeEventListener("click", click);
     }
   }, [cursor]);
 
 
   return (
     <div className="w-dvw h-dvh rounded-3xl border-4 border-[#03fbff]">
+      <div className="absolute inset-0 flex select-none w-screen h-screen z-20" >
+        <a className="w-full" onClick={prev} />
+        <a className="w-full" onClick={next} />
+      </div>
       {bucket.map(e => {
         if (e.index !== null)
           return (
